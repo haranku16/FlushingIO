@@ -21,7 +21,7 @@ public class FlushingIO {
 	private OutputStreamWriter out = null;
 	
 	public FlushingIO(InputStream is, OutputStream os) throws NoIOStreamException {
-		if (is != null && os != null) {
+		if (is == null && os == null) {
 			throw new NoIOStreamException();
 		}
 		if (is != null) {
@@ -32,14 +32,16 @@ public class FlushingIO {
 		}
 	}
 	
-	public void write(String s) throws IOException {
+	public void write(String s) throws IOException, CannotWriteException {
+		if (out == null) throw new CannotWriteException();
 		if (mode == IOMode.READ) {
 			mode = IOMode.WRITE;
 		}
 		out.write(s);
 	}
 	
-	public String readLine() throws IOException {
+	public String readLine() throws IOException, CannotReadException {
+		if (in == null) throw new CannotReadException();
 		if (mode == IOMode.WRITE) {
 			out.flush();
 			mode = IOMode.WRITE;
